@@ -1,34 +1,42 @@
 import React from 'react';
 import ReactDOM from 'react-dom'
+import SeasonDisplay from './SeasonDisplay';
 
 
 
 class App extends React.Component {
 
-    // constructor function is first to be called, setting state!
+    // constructor function is first to be called, setting state! Best not to load data in constructor, use componentDidMount instead.
 
-    constructor(props) {
-        // must include super, refrence to parents constructor function
-        super(props);
+    // constructor(props) {
+    //     // must include super, refrence to parents constructor function
+    //     super(props);
 
-        // setting the state object, can refernce this in any function within component. This is the only teim we do direct assignment.
-        this.state = { lat: null, errorMessage: '' };
+    //     // setting the state object, can refernce this in any function within component. This is the only teim we do direct assignment.
+    //     this.state = { lat: null, errorMessage: '' };
+    // }
 
+
+    // alternate way to initalize state.
+
+    state = { lat: null, errorMessage: '' };
+
+    // lifecycle Methods
+
+    componentDidMount() {
         // get user current location
         window.navigator.geolocation.getCurrentPosition(
             // Success
-            (position) => {
-                // call setState to update state! never directly update state
-                this.setState({ lat: position.coords.latitude })
-            },
-            // failure
-            (err) => {
-                this.setState({ errorMessage: err.message });
-            }
+            position => this.setState({ lat: position.coords.latitude }),
+            err =>  this.setState({ errorMessage: err.message })
+          
         );
-
-
     }
+
+    componentDidUpdate() {
+        console.log('component just updated!');
+    }
+
 
     // must define render!
     render() {
@@ -41,7 +49,7 @@ class App extends React.Component {
         }
 
         if (!this.state.errorMessage && this.state.lat) {
-            return <div>Latitude { this.state.lat} </div>;
+            return <SeasonDisplay lat={this.state.lat} />
         }
 
         return <div>Loading!</div>;
