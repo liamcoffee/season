@@ -12,7 +12,7 @@ class App extends React.Component {
         super(props);
 
         // setting the state object, can refernce this in any function within component. This is the only teim we do direct assignment.
-        this.state = { lat: null };
+        this.state = { lat: null, errorMessage: '' };
 
         // get user current location
         window.navigator.geolocation.getCurrentPosition(
@@ -22,7 +22,9 @@ class App extends React.Component {
                 this.setState({ lat: position.coords.latitude })
             },
             // failure
-            (err) => console.log(err)
+            (err) => {
+                this.setState({ errorMessage: err.message });
+            }
         );
 
 
@@ -30,7 +32,19 @@ class App extends React.Component {
 
     // must define render!
     render() {
-        return <div>Latitude: {this.state.lat} </div>
+
+        // conditional rendering.
+        
+        if (this.state.errorMessage && !this.state.lat) {
+            return <div>Error: {this.state.errorMessage} </div>;
+            
+        }
+
+        if (!this.state.errorMessage && this.state.lat) {
+            return <div>Latitude { this.state.lat} </div>;
+        }
+
+        return <div>Loading!</div>;
     }
 }
 
